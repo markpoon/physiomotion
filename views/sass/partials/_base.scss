@@ -1,0 +1,35 @@
+@import "compass/reset";
+@import "singularitygs";
+@import "partials/animation";
+
+// Set legacy support
+// If you need support for IE6 or IE7, you should install the Box Sizing polyfill.
+// In your project's folder from the command line, type the following:
+// compass install singularitygs/box-sizing
+$legacy-support-for-ie6:     true;
+$legacy-support-for-ie7:     true;
+$legacy-support-for-mozilla: false;
+
+$background-grid-color: Gray;
+
+$grids: 2;
+$grids: add-grid(5 7 at 500px);
+$grids: add-grid(4 8 at 700px);
+$grids: add-grid(3 9 at 900px);
+
+$gutters: .10;
+$gutters: add-gutter(.15 at 500px);
+
+$font-size: 16px;
+$font-family: Myriad, "Helvetica Neue", Arial, Helvetica, sans-serif;
+
+* { @include box-sizing('border-box');-webkit-print-color-adjust: exact;}
+body{
+  font-family: $font-family;
+  font-size: $font-size;
+}
+
+@import "compass/typography";
+@import "compass/typography/text/force-wrap";
+@import "compass/css3";
+@import "compass/utilities";

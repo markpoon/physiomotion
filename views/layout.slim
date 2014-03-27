@@ -1,0 +1,51 @@
+doctype html
+head
+  link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"
+  link href="//netdna.bootstrapcdn.com/bootswatch/3.1.0/cosmo/bootstrap.min.css" rel="stylesheet"
+  link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet"
+  link href="/css/style.css" rel="stylesheet"
+  meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+body.container-fluid
+  nav.navbar.navbar-default.navbar-fixed-top role="navigation"
+    .container-fluid
+      ul.nav.navbar-nav
+        li.dropdown
+          a.dropdown-toggle data-toggle="dropdown" href="#"
+            i.fa.fa-chevron-down>
+            | PhysioMotion
+          ul.dropdown-menu
+            li
+              a href="pelvicfloor"
+                i.fa.fa-map-marker>
+                |About the Pelvic Floor
+            li
+              a href="services"
+                i.fa.fa-map-marker>
+                |Services
+            li
+              a href="about"
+                i.fa.fa-map-marker>
+                |About Us
+            li
+              a href="ourteam"
+                i.fa.fa-map-marker>
+                |Our Team
+            li
+              a href="contactus"
+                i.fa.fa-map-marker>
+                |Contact Us
+            li.divider
+            li
+              a onclick="toggle_edit_ui()" href="javascript:void(0)"
+                i.fa.fa-pencil>
+                | Edit
+      ul.nav.navbar-nav.navbar-right
+        li
+          a href="#"
+            i.fa.fa-envelope-o>
+            | Email Us
+  .container-fluid
+    == yield
+script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
+script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"
+script src="/scripts/cms.js"
