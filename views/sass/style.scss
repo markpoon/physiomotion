@@ -1,6 +1,12 @@
 // @import "partials/base";
 
-body { padding: 70px 0; }
+$brand-success: #99FF00;
+$brand-primary: #2A1B13;
+$white: #f7f7f7;
+$brand-info: #2C2929;
+
+body { padding: 50px, 0px; }
+
 .fluid-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
