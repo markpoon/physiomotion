@@ -11,6 +11,7 @@ get_markdown_ajax=(markdown)->
   $.ajax "/md/#{markdown.id}",
     type:"GET"
     dataType:"html"
+    async:false
     success:(data, status, jqxhr)->
       display_html(markdown.id, data)
       null
@@ -23,6 +24,7 @@ get_plaintext_ajax=(markdown)->
   $.ajax "/markdown/#{markdown.id}",
     type:"GET"
     dataType:"html"
+    async:false
     success:(data, status, jqxhr)->
       display_html(markdown.id, data)
     error:(data, status, jqxhr)->
@@ -34,9 +36,10 @@ post_plaintext_ajax=(markdown)->
   $.ajax "/markdown/#{markdown.id}",
     type:"POST"
     dataType:"text"
+    async:false
     data:
       markdown:
-        markdown.innerText
+        markdown.innerHTML
     success:(data, status, jqxhr)->
       display_html(markdown.id, data)
     error:(data, status, jqxhr)->
@@ -58,8 +61,13 @@ set_editing_style=(markdown)->
   null
 
 toggle_edit_ui= ->
-  $.get "/login"
-  for_each_markdown_region (set_editing_style)
+  $.ajax "/login",
+    type:"GET"
+    async:false
+    success:(data, status, jqxhr)->
+      for_each_markdown_region (set_editing_style)
+    error:(data, status, jqxhr)->
+      alert("error logging in")
   null
 
 logout= ->

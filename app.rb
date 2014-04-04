@@ -79,21 +79,21 @@ class Application < Sinatra::Base
   end
 
   get '/markdown/:filename' do
-    protected!
+    # protected!
     Rack::Utils.escape_html File.read("./views/" + params[:filename] + ".md")
   end
 
   post '/markdown/:filename' do
-    protected!
+    # protected!
     filename = "./views/" + params[:filename] + ".md"
     File.open(filename,'w') do |file|
-      file.write params[:markdown]
+      file.write params[:markdown].gsub("</div>", "").gsub("<div>", "\n\n")
     end
     markdown params[:filename].intern
   end
 
   get '/:filename' do
-    slim params[:filename].intern 
+    slim params[:filename].intern
     #|| halt(404,params[:filename]+".slim not found")
   end
 
