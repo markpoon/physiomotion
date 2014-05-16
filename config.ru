@@ -7,4 +7,6 @@ if ENV["RACK_ENV"] == 'development' or ENV["RACK_ENV"] == 'test'
 end
 
 require './app'
-run Application
+require './cms'
+
+run Rack::Cascade.new [CMS, Site]

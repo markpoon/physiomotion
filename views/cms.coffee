@@ -1,3 +1,6 @@
+get_page_section=(page)->
+  $.get "/page/#{page
+
 for_each_markdown_region=(func)->
   func(markdown) for markdown in $(".md")
   null
@@ -32,9 +35,23 @@ get_plaintext_ajax=(markdown)->
       null
   null
 
+put_plaintext_ajax=(markdown)->
+  $.ajax "/markdown/#{markdown.id}",
+    type:"PUT"
+    dataType:"text"
+    async:false
+    data:
+      markdown:
+        markdown.innerHTML
+    success:(data, status, jqxhr)->
+      display_html(markdown.id, data)
+    error:(data, status, jqxhr)->
+      alert("error loading markdown")
+      null
+
 post_plaintext_ajax=(markdown)->
   $.ajax "/markdown/#{markdown.id}",
-    type:"POST"
+    type:"PUT"
     dataType:"text"
     async:false
     data:
@@ -57,7 +74,8 @@ set_editing_style=(markdown)->
   markdown.onblur= ->
     @classList.add "editing"
     @classList.remove "pre"
-    post_plaintext_ajax markdown
+    markdown.contentEditable= "false"
+    put_plaintext_ajax markdown
   null
 
 toggle_edit_ui= ->
