@@ -13,37 +13,24 @@ body.container-fluid
           a.dropdown-toggle data-toggle="dropdown" href="#"
             img src="images/logo.png"
           ul.dropdown-menu
-            li
-              a href="pelvicfloor"
-                i.fa.fa-user-md>
-                |About the Pelvic Floor
-            li
-              a href="services"
-                i.fa.fa-flask>
-                |Services
-            li
-              a href="about"
-                i.fa.fa-map-marker>
-                |About Us
-            li
-              a href="ourteam"
-                i.fa.fa-users>
-                |Our Team
-            li
-              a href="contactus"
-                i.fa.fa-map-marker>
-                |Contact Us
             li.divider
             li
-              a onclick="toggle_edit_ui()" href="javascript:void(0)"
-                i.fa.fa-pencil>
+              a#edit onclick="toggle_edit_ui()" href="javascript:void(0)"
                 | Edit
       ul.nav.navbar-nav.navbar-right
         li
           a href="#"
             i.fa.fa-envelope-o>
             | Email Us
-  #padding-for-menu.container-fluid
+  .md.padding-for-menu.container-fluid
+    #loginmodal.modal.fade aria-hidden="true" aria-labelledby="password?" role="dialog" tabindex="-1" 
+      .modal-dialog.modal-sm
+        .modal-content
+          .input-group.input-group-sm#login-input
+            input#passwordField.form-control placeholder="Password" type="password"
+              span.input-group-btn
+                button#login.btn.btn-default type="button"  Login
+
     == yield
 script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"
 script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"

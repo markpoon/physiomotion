@@ -27,24 +27,12 @@ class Site < Sinatra::Base
     coffee :cms
   end
 
-  get '/' do
-    slim :index
-  end
-
-  get '/login' do
-    authorized?
-  end
-
-  get '/logout' do
-    session = {}
-  end
-
-  get '/:filename' do
-    slim params[:filename].intern
-  end
-
   get '/css/:name.css' do
     content_type 'text/css', charset: 'utf-8'
     scss(:"/sass/#{params[:name]}")
+  end
+
+  get '/' do
+    slim :index
   end
 end

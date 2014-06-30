@@ -11,6 +11,7 @@ gem 'sass'
 gem 'redcarpet'
 gem 'reverse_markdown'
 gem 'coffee-script'
+gem 'jade'
 
 gem 'mongoid', '~> 3.1.6'
 
