@@ -51,6 +51,7 @@ $brand-info: #2C2929;
 }
 
 body {
+  padding-bottom: 25px;
   font: 16px/26px Gibson;
 }
 
@@ -68,7 +69,11 @@ body {
 
 h1, h2 {
   font-family: Gibson-Light;
-  font-weight: normal;
+}
+
+h3, h4, h5, h6{
+  font-family: Gibson;
+  font-weight: bold;
 }
 
 .fluid-wrapper {
@@ -92,10 +97,35 @@ h1, h2 {
   white-space: -pre-wrap;      /* Opera 4-6 */
   white-space: -o-pre-wrap;    /* Opera 7 */
   word-wrap: break-word;       /* Internet Explorer 5.5+ */
-  margin: 0 20px;
 }
 
-.editing {
-  border: 2pt dashed;
-  margin: 0 20px;
+.edit{
+  padding: 20px;
+  border: 0px solid;
+  border-radius: 13px;
+  margin-bottom: 20px;
+  transition: box-shadow 1.3s;
+  outline: 0;
+}
+
+
+.editable {
+  @extend .edit;
+  -webkit-box-shadow: 0px 0px 29px 6px rgba(46,46,46,1);
+  -moz-box-shadow: 0px 0px 29px 6px rgba(46,46,46,1);
+  box-shadow: 0px 0px 29px 6px rgba(46,46,46,1);
+}
+
+.editing{
+  @extend .edit;
+  -webkit-box-shadow: 0px 0px 17px 10px rgba(110,112,43,1);
+  -moz-box-shadow: 0px 0px 17px 10px rgba(110,112,43,1);
+  box-shadow: 0px 0px 17px 10px rgba(110,112,43,1);
+}
+
+.edited{
+  @extend .edit;
+  webkit-box-shadow: 0px 0px 29px 6px rgba(22,46,3,1);
+  -moz-box-shadow: 0px 0px 29px 6px rgba(22,46,3,1);
+  box-shadow: 0px 0px 29px 6px rgba(22,46,3,1);
 }

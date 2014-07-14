@@ -1,5 +1,6 @@
 require 'mongoid'
 require 'grape'
+require 'kramdown'
 
 class User
   include Mongoid::Document
@@ -28,17 +29,10 @@ end
 class CMS < Grape::API
   format :json
   helpers do
-    def authenticate!
-      binding.pry
-      error!('401 Unauthorized', 401) unless current_user
-    end
     def page() @page = Page.find_by(title: params[:page_title]) end
-    def renderer
-      unless @renderer
-        h = Redcarpet::Render::HTML.new(with_toc_data: true, hard_wrap: true)
-        @renderer = Redcarpet::Markdown.new(h, tables: true, autolink: true)
-      end
-      return @renderer
+
+    def parse(file,source="Kramdown")
+      Kramdown::Document.new(file,{input:source})
     end
   end
 
@@ -75,29 +69,38 @@ class CMS < Grape::API
 
       route_param :title do
         get do
-          renderer.render(page.sections.find_by(title: params[:title]).markdown).gsub("\n","")
+          p = page.sections.find_by(title: params[:title]).markdown
+          r = parse(p).to_html
+          puts "markdown: #{p.inspect}"
+          puts "html: #{r}"
+          r
         end
 
         http_basic do |username, password|
           [username, password] == ["user", "password"]
         end
 
-        get '/raw' do
-          page.sections.find_by(title: params[:title]).markdown.gsub("\n\n","\n").gsub("\n","<br>")
-        end
-
-        delete do
-          page.sections.find_by(title: params[:title]).destroy
+        get '/plaintext' do
+          p = page.sections.find_by(title: params[:title]).markdown
+          puts "markdown: #{p.inspect}"
+          p
         end
 
         params do
           requires :markdown, type: String
         end
         put do
-          section = page.sections.where(title: params[:title]).entries.first
-          section.markdown = ReverseMarkdown.convert(params[:markdown]).gsub("\n", "\n\n")
-          section.save!
-          renderer.render(section.markdown)
+          s = page.sections.where(title: params[:title]).entries.first
+          # s.markdown = parse(params[:markdown],"Html").to_kramdown
+          s.markdown = params[:markdown]
+          s.save!
+          puts "params: #{params[:markdown].inspect}"
+          puts "markdown: #{s.markdown.inspect}"
+          s.markdown
+        end
+
+        delete do
+          page.sections.find_by(title: params[:title]).destroy
         end
       end
     end

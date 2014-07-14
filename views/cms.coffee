@@ -1,5 +1,6 @@
 $(document).ready ->
   window.App = {}
+  App.saving = false
   App.path=->
     path = window.location.pathname.replace("/", "")
     if !path then path = "index"
@@ -45,18 +46,17 @@ $(document).ready ->
 
   get_plaintext_ajax=(markdown)->
     if App.password
-      $.ajax "/pages/#{App.path()}/#{markdown.id}/raw",
+      $.ajax "/pages/#{App.path()}/#{markdown.id}/plaintext",
         type:"GET"
         dataType:"json"
         async:false
         username:'user'
         password:App.password
         success:(data, status, jqxhr)->
-          for_each_markdown_region (set_editing_style)
-          display_html(data, markdown)
+          set_editing_style markdown
+          display_text(data, markdown)
           null
         error:(data, status, jqxhr)->
-          alert "error loading markdown"
           null
     else
       alert "no password present"
@@ -67,11 +67,16 @@ $(document).ready ->
       type:"PUT"
       dataType:"json"
       async:false
+      username:'user'
+      password:App.password
       data:
         markdown:
-          markdown.innerHTML
+          markdown.innerText
       success:(data, status, jqxhr)->
-        display_html(data, markdown)
+        display_text(data, markdown)
+        App.saving = false
+        markdown.classList.remove "edited"
+        markdown.classList.add "editable"
         null
       error:(data, status, jqxhr)->
         alert("unable to PUT")
@@ -79,14 +84,16 @@ $(document).ready ->
 
   post_plaintext_ajax=(markdown)->
     $.ajax "/pages/#{markdown.id}",
-      type:"PUT"
+      type:"POST"
       dataType:"json"
       async:false
+      username:'user'
+      password:App.password
       data:
         markdown:
           markdown.innerHTML
       success:(data, status, jqxhr)->
-        display_html(data,markdown)
+        display_text(data,markdown)
       error:(data, status, jqxhr)->
         alert("error loading markdown")
     null
@@ -112,22 +119,36 @@ $(document).ready ->
       targets.innerHTML = content
     null
 
+  display_text=(content, markdown)->
+    for targets in $("#"+markdown.id)
+      targets.innerText = content
+    null
+
   set_editing_style=(markdown)->
-    $("#edit").text("Finish Editing")
-    markdown.classList.add "editing"
+    markdown.classList.add "editable"
     markdown.contentEditable= "true"
     markdown.onfocus= ->
-      @classList.remove "editing"
-      @classList.add "pre"
-      get_plaintext_ajax(markdown)
-      null
-    markdown.onblur= ->
+      @classList.remove "editable"
       @classList.add "editing"
-      @classList.remove "pre"
-      markdown.contentEditable= "false"
-      put_plaintext_ajax markdown
+      get_plaintext_ajax markdown
+      null
+
+    markdown.onblur= ->
+      if App.saving == false
+        App.saving = true
+        @classList.remove "editing"
+        @classList.add "edited"
+        put_plaintext_ajax markdown
       null
     null
+
+  remove_editing_style=(markdown)->
+    markdown.classList.remove "editable"
+    markdown.contentEditable= "false"
+    markdown.onblur= ->
+      null
+    markdown.onfocus= ->
+      null
 
   toggle_edit_ui= ->
     $("#loginmodal").modal('toggle')
@@ -147,8 +168,19 @@ $(document).ready ->
   $("#login").click ->
     App.password = $("#passwordField").val()
     $("#loginmodal").modal 'toggle'
-    for_each_markdown_region set_editing_style
     for_each_markdown_region get_plaintext_ajax
+    $("#edit").text "Finish"
+    $("#edit").click ->
+      $("#edit").text "Edit"
+      for_each_markdown_region remove_editing_style
+      for_each_markdown_region get_markdown_ajax
+      $("#edit").click ->
+        toggle_edit_ui()
+        null
+    null
+
+  $("#edit").click ->
+    toggle_edit_ui()
     null
 
   get_page_index_ajax()
