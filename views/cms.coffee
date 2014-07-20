@@ -102,8 +102,7 @@ $(document).ready ->
     menu = $(".dropdown-menu")
     for menuitem in data.reverse()
       title = menuitem.title.replace(/_/gi, ' ')
-      menu.prepend("<li><a href=\"#{menuitem.title}\">
-                   <i class=\"fa #{menuitem.icon}\"></i> #{title}</a></li>")
+      menu.prepend("<li><a href=\"#{menuitem.title}\">#{title}<i style=\"float:right;\" class=\"fa #{menuitem.icon}\"></i></li>")
 
   make_markdown_regions=(regions)->
     content = $(".md")

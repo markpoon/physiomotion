@@ -38,7 +38,7 @@ class CMS < Grape::API
 
   resource :pages do
     get do
-      Page.without(:_id, :sections).entries.as_json
+      Page.without(:_id, :sections).entries.reject{|i|i.title=="index"}.as_json
     end
 
     params do
@@ -47,7 +47,7 @@ class CMS < Grape::API
     end
     post do
       # authenticate!
-      @page = Page.create!(title: params[:page_title]..gsub(" ", "_"), icon: params[:icon])
+      @page = Page.create!(title: params[:page_title].gsub(" ", "_"), icon: params[:icon])
     end
 
     delete do

@@ -52,7 +52,22 @@ $brand-info: #2C2929;
 
 body {
   padding-bottom: 25px;
-  font: 16px/26px Gibson;
+  font: 20px/38px Gibson;
+}
+
+.menu {
+  background-image: url("/images/nav_bg.jpg");
+  -webkit-box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
+  -moz-box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
+  box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
+}
+
+.navbar .nav > li > a {
+  color: #fff;
+}
+
+.dropdown-menu li a {
+  font: 18px/25px Gibson;
 }
 
 #login-input {

@@ -35,4 +35,7 @@ class Site < Sinatra::Base
   get '/' do
     slim :index
   end
+  get '/carousel' do
+    slim :carousel
+  end
 end
