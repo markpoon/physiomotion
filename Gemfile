@@ -12,6 +12,8 @@ gem 'kramdown'
 gem 'reverse_markdown'
 gem 'coffee-script'
 gem 'jade'
+gem 'webster'
+gem 'forgery'
 
 gem 'mongoid', '~> 3.1.6'
 

@@ -4,6 +4,7 @@ $ ->
   App.path=->
     path = window.location.pathname.replace("/", "")
     if !path then path = "index"
+    return path
 
   get_page_index_ajax=()->
     $.ajax "/pages/",
@@ -15,15 +16,26 @@ $ ->
       error:(data, status, jqxhr)->
         alert("there was a problem loading menus")
 
-  post_page_ajax=(path)->
-    $.ajax "/pages/#{path}",
+  post_page_ajax= ->
+    $.ajax "/pages/",
       type:"POST"
       dataType:"json"
       async:false
       success:(data, status, jqxhr)->
-        make_menu data
+        make_menus data
       error:(data, status, jqxhr)->
         alert("could not make a new page for some reason")
+
+  post_section_ajax= ->
+    $.ajax "/pages/#{App.path()}",
+      type:"POST"
+      dataType:"json"
+      async:false
+      success:(data, status, jqxhr)->
+        get_page_ajax(App.path())
+        for_each_markdown_region get_markdown_ajax
+      error:(data, status, jqxhr)->
+        alert("could not make a new section for some reason")
 
   get_page_ajax=(path)->
     $.ajax "/pages/#{path}",
@@ -94,15 +106,16 @@ $ ->
         alert("error loading markdown")
 
   make_menus=(data)->
+    $(".menuitem").remove()
     menu = $(".dropdown-menu")
     for menuitem in data.reverse()
       title = menuitem.title.replace(/_/gi, ' ')
-      menu.prepend("<li><a href=\"#{menuitem.title}\">#{title}<i style=\"float:right;\" class=\"fa #{menuitem.icon}\"></i></li>")
+      menu.prepend("<li class=\"menuitem\"><a href=\"#{menuitem.title}\">#{title}<i style=\"float:right;\" class=\"fa #{menuitem.icon}\"></i></li>")
 
   make_markdown_regions=(regions)->
     content = $(".md")
     for region in regions
-      content.append("<div class=\"row\"><div id=\"#{region.title}\" class=\"mdc col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2\"></div></div>")
+      content.append("<div class=\"row\"><div id=\"#{region._id}\" class=\"mdc col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2\"></div></div>")
 
   for_each_markdown_region=(func)->
     func(markdown) for markdown in $(".mdc")
@@ -117,9 +130,6 @@ $ ->
 
   show_password_entry= ->
     $("#loginmodal").modal('toggle')
-
-    #  $(".nav").on "click", "#edit", ->
-    #    show_password_entry()
 
   set_editing_style=(markdown)->
     markdown.classList.add "editable"
@@ -145,15 +155,34 @@ $ ->
     markdown.removeAttribute "onfocus"
 
   set_editing_interface= ->
-    $("#edit").text "Finish"
+    $("#edit").text "Done Editing"
+    $(".dropdown-menu").append("<li><a id=\"createpage\" href=\"#\">Add Page</li>")
+    $("#topinterface").prepend('<div class="row"><div id="pagecontrols" class="col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2"><button style="width:100%" id="tobottom" type="button" class="btn btn-lg">Scroll To The Bottom</button></div></div>')
+    $("#bottominterface").append('<div class="row"><div id="pagecontrols" class="col-sm-12 col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2"><button style="width:100%" id="createsection" type="button" class="btn btn-lg btn-success">Add Another Section</button></div></div>')
     $(".nav").off "click", "#edit"
     $(".nav").on "click", "#edit", ->
       remove_editing_interface()
-    for_each_markdown_region get_plaintext_ajax
+
+  $(document).on "click", "#tobottom", ->
+    $("html, body").scrollTop $(document).height()
+
+  $(document).on "click", "#createsection", ->
+    create_section()
+
+  $(".dropdown-menu").on "click", "#createpage", ->
+    create_page()
+
+  create_page= ->
+    post_page_ajax()
+
+  create_section= ->
+    post_section_ajax()
 
   remove_editing_interface= ->
     $("#edit").text "Edit"
     $(".nav").off "click", "#edit"
+    $("#createpage").remove()
+    $("#pagecontrols").remove()
     $(".nav").on "click", "#edit", ->
       show_password_entry()
     for_each_markdown_region get_markdown_ajax

@@ -1,6 +1,9 @@
 require 'mongoid'
 require 'grape'
 require 'kramdown'
+require 'webster'
+require 'forgery'
+
 
 class User
   include Mongoid::Document
@@ -15,15 +18,20 @@ end
 class Page
   include Mongoid::Document
   embeds_many :sections
-  field :title, type: String
+  field :title, type: String, default: ->{w = Webster.new; w.random_word}
   field :icon, type: String
+
+  after_create :build_sections
+
+  def build_sections
+    3.times{ self.sections.create! } unless self.sections.nil?
+  end
 end
 
 class Section
   include Mongoid::Document
   embedded_in :page
-  field :title, type: String
-  field :markdown, type: String
+  field :markdown, type: String, default: ->{Forgery(:lorem_ipsum).words(50)}
 end
 
 class CMS < Grape::API
@@ -38,16 +46,12 @@ class CMS < Grape::API
 
   resource :pages do
     get do
-      Page.without(:_id, :sections).entries.reject{|i|i.title=="index"}.as_json
+      Page.without(:_id, :sections).entries.reject{|i|i.title=="index"}.as_json.map!{|i|i.except("_id")}
     end
 
-    params do
-      requires :page_title, type: String
-      requires :icon, type: String
-    end
     post do
-      # authenticate!
-      @page = Page.create!(title: params[:page_title].gsub(" ", "_"), icon: params[:icon])
+      @page = Page.create!
+      Page.without(:_id, :sections).entries.reject{|i|i.title=="index"}.as_json.map!{|i|i.except("_id")}
     end
 
     delete do
@@ -56,20 +60,16 @@ class CMS < Grape::API
 
     route_param :page_title do
       get do
-        page.sections.as_json.each{|i|i.except!("_id", "markdown")}
+        page.sections.as_json.each{|i|i.select{|j|j["_id"]}}
       end
 
-      params do
-        requires :title, type: String
-        requires :markdown, type: String
-      end
       post do
-        page.sections.create!(markdown: params[:markdown], title: params[:title])
+        page.sections.create!
       end
 
-      route_param :title do
+      route_param :id do
         get do
-          p = page.sections.find_by(title: params[:title]).markdown
+          p = page.sections.find(params[:id]).markdown
           r = parse(p).to_html
           puts "markdown: #{p.inspect}"
           puts "html: #{r}"
@@ -81,7 +81,7 @@ class CMS < Grape::API
         end
 
         get '/plaintext' do
-          p = page.sections.find_by(title: params[:title]).markdown
+          p = page.sections.find(params[:id]).markdown
           puts "markdown: #{p.inspect}"
           p
         end
@@ -90,8 +90,7 @@ class CMS < Grape::API
           requires :markdown, type: String
         end
         put do
-          s = page.sections.where(title: params[:title]).entries.first
-          # s.markdown = parse(params[:markdown],"Html").to_kramdown
+          s = page.sections.find(params[:id])
           s.markdown = params[:markdown]
           s.save!
           puts "params: #{params[:markdown].inspect}"
@@ -100,7 +99,7 @@ class CMS < Grape::API
         end
 
         delete do
-          page.sections.find_by(title: params[:title]).destroy
+          page.sections.find(params[:id]).destroy
         end
       end
     end

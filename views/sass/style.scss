@@ -56,7 +56,7 @@ body {
 }
 
 .menu {
-  background-image: url("/images/nav_bg.jpg");
+ // background-image: url("/images/nav_bg.jpg");
   -webkit-box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
   -moz-box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
   box-shadow: 0px 0px 10px 6px rgba(46,46,46,.4);
@@ -67,9 +67,18 @@ body {
   width: 100%;
 }
 
+/*
 .navbar .nav > li > a {
   color: #fff;
 }
+
+.navbar-default .navbar-brand {
+  color: #fff;
+}
+.navbar-default .navbar-nav .open .dropdown-menu>li>a{
+  color: #fff;
+}
+*/
 
 .dropdown-menu li a {
   font: 18px/25px Gibson;
@@ -81,6 +90,7 @@ body {
 
 #passwordField {
   width: 100%;
+  margin-top: 2px;
 }
 
 .padding-for-menu{

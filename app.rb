@@ -32,10 +32,7 @@ class Site < Sinatra::Base
     scss(:"/sass/#{params[:name]}")
   end
 
-  get '/' do
+  get '/*' do
     slim :index
-  end
-  get '/carousel' do
-    slim :carousel
   end
 end
